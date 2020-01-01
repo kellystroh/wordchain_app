@@ -1,13 +1,61 @@
 
 
 <html>
+<head>
+    <style>
+        .flex-container {
+            display: flex;
+            background-color: white;
+        }
+        
+        .flex-container > div {
+            margin-left: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
 <body>
-    <div class="formwrapper">
-        <h2 class="title">Generate New Gameboard</h2>
+<div class='flex-container'>
+<div> 
+    <div style="padding: 10px; width: 250px;"> <h3>Word Chain Puzzle</h3> </div>
+    <div class="formwrapper" style="padding: 10px; width: 250px;">
         <form method="POST" action="">
             {{ form.csrf_token }}
             {{ form.submit }}
         </form>
     </div>
+    <div style="padding: 20px; width: 250px;"> 
+        <li>Solve the puzzle by completing the 10-word chain.</li>
+        <br>
+        <li>Each word forms a phrase with the word below it. </li>
+        <br>
+        <li>After a word is chosen, one letter is revealed. Reveal one letter
+            per guess until only one letter remains. Then you have to guess. 
+        </li>
+        <br>
+        <li>CASE SENSITIVE. All answers are lower case.</li>
+        <br>
+        <li>No Numbers, No Punctuation!</li>
+        <br>
+        <li>No Numbers, No Punctuation!</li>
+
+    </div>
+</div>
+    <div class="flex-container" style="flex-direction: column;">
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;">  </div>
+    </div>
+</div>
+
 </body>
 </html>

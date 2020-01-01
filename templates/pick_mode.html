@@ -2,78 +2,72 @@
 <head>
     <style>
         .flex-container {
-          display: flex;
-          background-color: white;
+            display: flex;
+            background-color: white;
         }
         
         .flex-container > div {
-          margin-left: 10px;
-          margin-bottom: 0px;
-          padding: 10px;
-          font-size: 20px;
+            margin-left: 10px;
+            margin-bottom: 0px;
+            padding: 10px;
+            font-size: 18px;
         }
     </style>
 </head>
 
 <div class="flex-container">
     <div>
-        <h3>Word Chain Puzzle</h3>
+        <h3 style="margin-left: 20px;">Word Chain Puzzle</h3>
             {% if turn % 2 != 0 %}
                 <div style="padding: 20px; background-color: #fdff89;"> {{"Player 1's turn. Pick a word to guess!"}} </div>
                 {% else %}
                 <div style="padding: 20px; background-color: #89c6ff;"> {{"Player 2's turn. Pick a word to guess!"}} </div>
                 {% endif %}
-                {{choice}}
+                <div style="padding: 20px; width: 250px;"> 
+                    <li>Solve the puzzle by completing the 10-word chain.</li>
+                    <br>
+                    <li>Each word forms a phrase with the word below it. </li>
+                    <br>
+                    <li>After a word is chosen, one letter is revealed. Reveal one letter
+                        per guess until only one letter remains. Then you have to guess. 
+                    </li>
+                    <br>
+                    <li>CASE SENSITIVE. All answers are lower case.</li>
+                    <br>
+                    <li>No Numbers, No Punctuation!</li>
+                    <br>
+                    <li>No Numbers, No Punctuation!</li>
+
+                </div>
+                
     </div>
     <div class="flex-container" style="flex-direction: column;">
         {% for i, word in board %}
         {% if i in solved %}
-        <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{word}} </div>
+        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word}} </div>
         {% elif i not in solved %}
                 {% if i in active %}
                     {% if i == active[0] %}
-                        {% if i == choice %}
-                            <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{word[:letters_active]}} 
-                                <div class="formwrapper">
-                                    <form method="POST" action="" >
-                                        {{ form1.csrf_token }}
-                                        {{ form1.select }}
-                                    </form>
-                                </div>
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_active]}} 
+                            <div class="formwrapper">
+                                <form method="POST" action="" >
+                                    {{ form1.csrf_token }}
+                                    {{ form1.select }}
+                                </form>
                             </div>
-                        {% elif i != choice %}
-                            <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{word[:letters_other]}} 
-                                <div class="formwrapper">
-                                    <form method="POST" action="" >
-                                        {{ form1.csrf_token }}
-                                        {{ form1.select }}
-                                    </form>
-                                </div>
-                            </div>
-                            {% endif %}
+                        </div>
                     {% elif i == active[1] %}
-                        {% if i == choice %}
-                            <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{word[:letters_other]}} 
-                                <div class="formwrapper">
-                                    <form method="POST" action="" >
-                                        {{ form2.csrf_token }}
-                                        {{ form2.select }}
-                                    </form>
-                                </div>
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_other]}} 
+                            <div class="formwrapper">
+                                <form method="POST" action="">
+                                    {{ form2.csrf_token }}
+                                    {{ form2.select }}   
+                                </form>
                             </div>
-                        {% elif i != choice %}
-                            <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{word[:letters_active]}} 
-                                <div class="formwrapper">
-                                    <form method="POST" action="" >
-                                        {{ form2.csrf_token }}
-                                        {{ form2.select }}
-                                    </form>
-                                </div>
-                            </div>
-                        {% endif %}
+                        </div>
                     {% endif %}
                 {% elif i not in active%}
-                    <div style="flex-basis: 30px; width:130px; background-color: #64dfce;"> {{" "}} </div>
+                    <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{" "}} </div>
             {% endif %}
             {% endif %}
             <br> <br>

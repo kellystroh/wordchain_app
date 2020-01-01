@@ -24,7 +24,7 @@ session = DBSession()
 
 class SubmitForm(FlaskForm):
     """Submit form."""
-    submit = SubmitField('Submit')
+    submit = SubmitField('Generate New Game')
 
 class SelectForm(FlaskForm):
     """Submit form."""
@@ -36,11 +36,14 @@ class AnswerForm(FlaskForm):
     submit = SubmitField('Submit')
 
 def find_active(solved):
-    not_solved = []
-    for x in range(0,9):
-        if x not in solved:
-            not_solved.append(x)
-    return [min(not_solved), max(not_solved)]
+    if len(solved) < 10:
+        not_solved = []
+        for x in range(0,9):
+            if x not in solved:
+                not_solved.append(x)
+        return [min(not_solved), max(not_solved)]
+    else:
+        return []
 
 with open("word_dict.pickle", 'rb') as inputfile:
     word_dict = pickle.load(inputfile)
@@ -88,8 +91,8 @@ def choose_mode(a, b):
     if form1.validate_on_submit():
         game = session.query(Game).filter(Game.id == a).all()
         ### check if player chose same word as last turn
-        if choice == active[1]:
-            letters_active, letters_other = letters_other, letters_active
+        # if choice == active[1]:
+        #     letters_active, letters_other = letters_other, letters_active
         ### update value of choice to reflect player's choice
         choice = active[0]
         ### check whether more preview letters are available
@@ -109,13 +112,13 @@ def choose_mode(a, b):
     elif form2.validate_on_submit():
         game = session.query(Game).filter(Game.id == a).all()
         ### check if player chose same word as last turn
-        if choice == active[0]:
-            letters_active, letters_other = letters_other, letters_active
+        # if choice == active[0]:
+        #     letters_active, letters_other = letters_other, letters_active
         ### update value of choice to reflect player's choice
         choice = active[1]
         ### check whether more preview letters are available
-        if len(board_list[choice]) > letters_active + 1:
-            letters_active = game[0].letters_active + 1
+        if len(board_list[choice]) > letters_other + 1:
+            letters_other = game[0].letters_other + 1
         ### update database 
         session.query(Game).filter(Game.id == a).update({"choice": choice, 
                                                           "letters_active":letters_active, 
@@ -156,21 +159,26 @@ def guess_mode(a, b):
             '''
             What happens when answer is right 
             '''
-            turn += 1
+            turn += 2
             b = int(b) + 1
             solved.append(choice)
             solved = sorted(solved)
+            if choice == active[0]:
+                letters_active = 0
+            else: 
+                letters_other = 0
             active = find_active(solved)
-            letters_active = 0
             params['b'] = b
             params['turn'] = turn
             params['solved'] = solved
             params['active'] = active
             params['letters_active'] = letters_active
+            params['letters_other']
             session.query(Game).filter(Game.id == a).update({'turn': turn,
                                                             'active': str(active),
                                                             'solved': str(solved),
-                                                            'letters_active':letters_active})
+                                                            'letters_active':letters_active,
+                                                            'letters_other': letters_other})
         else:
             '''
             What happens when answer is wrong 
