@@ -98,6 +98,8 @@ def choose_mode(a, b):
         ### check whether more preview letters are available
         if len(board_list[choice]) >= letters_active + 1:
             letters_active = game[0].letters_active + 1
+        else:
+            letters_active = game[0].letters_active
         ### update database 
         session.query(Game).filter(Game.id == a).update({"choice": choice, 
                                                           "letters_active":letters_active, 
@@ -119,6 +121,8 @@ def choose_mode(a, b):
         ### check whether more preview letters are available
         if len(board_list[choice]) >= letters_other + 1:
             letters_other = game[0].letters_other + 1
+        else:
+            letters_other = game[0].letters_other
         ### update database 
         session.query(Game).filter(Game.id == a).update({"choice": choice, 
                                                           "letters_active":letters_active, 
