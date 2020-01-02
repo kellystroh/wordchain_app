@@ -22,6 +22,18 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = scoped_session(DBSession)
 
+conn = sqlite3.connect('game-records.db')
+c = conn.cursor()
+
+
+def generate_board():
+    with sqlite3.connect('game-records.db') as con:
+    name = "bob"
+    c = con.cursor()
+    c.execute("INSERT INTO students (name) VALUES (?)",(name))
+    c.commit()
+
+
 class SubmitForm(FlaskForm):
     """Submit form."""
     submit = SubmitField('Generate New Game')
@@ -47,6 +59,15 @@ def find_active(solved):
 
 with open("word_dict.pickle", 'rb') as inputfile:
     word_dict = pickle.load(inputfile)
+
+
+def generate_board():
+    with sqlite3.connect('game-records.db') as con:
+    name = "bob"
+    c = con.cursor()
+    c.execute("INSERT INTO students (name) VALUES (?)",(name))
+    c.commit()
+
 
 #landing page to start a new game
 @app.route('/',methods=['GET','POST'])
@@ -96,7 +117,7 @@ def choose_mode(a, b):
         ### update value of choice to reflect player's choice
         choice = active[0]
         ### check whether more preview letters are available
-        if len(board_list[choice]) >= letters_active + 1:
+        if len(board_list[choice]) > letters_active + 1:
             letters_active = game[0].letters_active + 1
         else:
             letters_active = game[0].letters_active
@@ -119,7 +140,7 @@ def choose_mode(a, b):
         ### update value of choice to reflect player's choice
         choice = active[1]
         ### check whether more preview letters are available
-        if len(board_list[choice]) >= letters_other + 1:
+        if len(board_list[choice]) > letters_other + 1:
             letters_other = game[0].letters_other + 1
         else:
             letters_other = game[0].letters_other
@@ -249,7 +270,7 @@ def play():
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(host='0.0.0.0', port=80)
+   app.run(host='0.0.0.0', port=8080)
 
 
 '''
