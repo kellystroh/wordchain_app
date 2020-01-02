@@ -96,7 +96,7 @@ def choose_mode(a, b):
         ### update value of choice to reflect player's choice
         choice = active[0]
         ### check whether more preview letters are available
-        if len(board_list[choice]) < letters_active + 1:
+        if len(board_list[choice]) >= letters_active + 1:
             letters_active = game[0].letters_active + 1
         ### update database 
         session.query(Game).filter(Game.id == a).update({"choice": choice, 
@@ -117,7 +117,7 @@ def choose_mode(a, b):
         ### update value of choice to reflect player's choice
         choice = active[1]
         ### check whether more preview letters are available
-        if len(board_list[choice]) < letters_other + 1:
+        if len(board_list[choice]) >= letters_other + 1:
             letters_other = game[0].letters_other + 1
         ### update database 
         session.query(Game).filter(Game.id == a).update({"choice": choice, 
