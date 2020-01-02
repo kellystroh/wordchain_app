@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 
 from sqlalchemy import create_engine, update
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Game
 import numpy as np
 import random
@@ -20,7 +20,7 @@ engine = create_engine('sqlite:///game-records.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+session = scoped_session(DBSession)
 
 class SubmitForm(FlaskForm):
     """Submit form."""
