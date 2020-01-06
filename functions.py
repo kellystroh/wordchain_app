@@ -14,23 +14,12 @@ from ast import literal_eval
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length
+from forms import SelectForm, SubmitForm, AnswerForm, ConcedeForm, RestartForm
+
 
 with open("word_dict.pickle", 'rb') as inputfile:
     word_dict = pickle.load(inputfile)
 
-
-class SubmitForm(FlaskForm):
-    """Submit form."""
-    submit = SubmitField('Generate New Game')
-
-class SelectForm(FlaskForm):
-    """Submit form."""
-    select = SubmitField('Guess This Word')
-
-class AnswerForm(FlaskForm):
-    """Answer form."""
-    answer = TextField(label='Your Guess')
-    submit = SubmitField('Submit')
 
 def find_active(solved):
     if len(solved) < 10:
@@ -69,6 +58,8 @@ class Display_Choose_Mode(object):
     def go(self, session, a, b):
         form1 = SelectForm(prefix="form1")
         form2 = SelectForm(prefix="form2")
+        restart = RestartForm(prefix="restart")
+        concede = ConcedeForm(prefix="concede")
         game = session.query(Game).filter(Game.id == a).all()
         board_list = literal_eval(game[0].board)
         board = enumerate(board_list)
@@ -78,7 +69,8 @@ class Display_Choose_Mode(object):
         letters_active = game[0].letters_active
         letters_other = game[0].letters_other
         choice = game[0].choice
-        params = {'form1':form1, 'form2':form2, 
+        params = {'form1':form1, 'form2':form2,
+                'concede':concede, 'restart':restart, 
                 'board':board, 'solved':solved, 
                 'active':active, 'turn':turn,
                 'letters_active':letters_active,
@@ -118,11 +110,21 @@ class Enact_Choice(object):
         params['letters_other'] = letters_other
         return params
 
+class Concede(object):
+    def go(self, session, params, a, b):
+        full = list(range(0,10))
+        params['solved'] = full
+        session.query(Game).filter(Game.id == a).update({"solved": str(full)})
+
+        session.commit()
+        return params
+
 class Display_Guess_Mode(object):
     def go(self, session, a, b):
-        form = AnswerForm()
+        form = AnswerForm(prefix=form)
         game = session.query(Game).filter(Game.id == a).all()
-
+        restart = RestartForm(prefix="restart")
+        concede = ConcedeForm(prefix="concede")
         board_list = literal_eval(game[0].board)
         board = enumerate(board_list)
         solved = literal_eval(game[0].solved)
@@ -135,6 +137,7 @@ class Display_Guess_Mode(object):
               'board':board, 'solved':solved, 
               'turn':turn, 'active':active,
               'letters_active':letters_active,
+              'concede':concede, 'restart':restart, 
               'letters_other':letters_other, 
               'a':a, 'b':b, 'board_list':board_list}
         return params

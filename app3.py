@@ -7,8 +7,8 @@ from database_setup import Base, Game
 import numpy as np
 import random
 from functions import pick_new, pick_set, find_active
-from functions import Generate_Board, Display_Choose_Mode, Display_Guess_Mode, Enact_Choice, Enact_Guess
-from functions import AnswerForm, SelectForm, SubmitForm
+from functions import Generate_Board, Display_Choose_Mode, Display_Guess_Mode, Enact_Choice, Enact_Guess, Concede
+from forms import AnswerForm, SelectForm, SubmitForm, RestartForm, ConcedeForm
 import pickle
 from ast import literal_eval
 from flask_wtf import FlaskForm
@@ -22,7 +22,6 @@ engine = create_engine('sqlite:///game-records.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-# session = scoped_session(DBSession)
 
 with open("word_dict.pickle", 'rb') as inputfile:
     word_dict = pickle.load(inputfile)
@@ -58,11 +57,26 @@ def choose_mode(a, b):
         raise
     finally:
         session.close()
-             
+
+    if params['restart'].validate_on_submit():
+        return redirect(url_for('index')) 
+    
+    if params['concede'].validate_on_submit():
+        session = DBSession()
+        try:
+            params = Concede().go(session, params, a, b)
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+        return redirect(url_for('choose_mode', **params)) 
+
     if params['form1'].validate_on_submit():
         session = DBSession()
         try:
-            params = Enact_Choice().go(session, params, a, 0)
+            params = Enact_Choice().go(session, params, a, b)
             session.commit()
         except:
             session.rollback()
@@ -99,6 +113,21 @@ def guess_mode(a, b):
     finally:
         session.close()
     
+    if params['restart'].validate_on_submit():
+        return redirect(url_for('index'))   
+
+    if params['concede'].validate_on_submit():
+        session = DBSession()
+        try:
+            params = Concede().go(session, params, a, b)
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+        return redirect(url_for('choose_mode', **params)) 
+
     if params['form'].validate_on_submit():
         session = DBSession()
         try:
@@ -113,36 +142,6 @@ def guess_mode(a, b):
         return redirect(url_for('choose_mode', **params))
     
     return render_template('guess_mode.html', **params)
-
-
-# #This will let us Update our books and save it in our database
-# @app.route("/books/<int:book_id>/edit/", methods = ['GET', 'POST'])
-# def editBook(book_id):
-#    editedBook = session.query(Book).filter_by(id=book_id).one()
-#    if request.method == 'POST':
-#        if request.form['name']:
-#            editedBook.title = request.form['name']
-#            return redirect(url_for('showBooks'))
-#    else:
-#        return render_template('editBook.html', book = editedBook)
-
-# #This will let us Delete our book
-# @app.route('/books/<int:book_id>/delete/', methods = ['GET','POST'])
-# def deleteBook(book_id):
-#    bookToDelete = session.query(Book).filter_by(id=book_id).one()
-#    if request.method == 'POST':
-#        session.delete(bookToDelete)
-#        session.commit()
-#        return redirect(url_for('showBooks', book_id=book_id))
-#    else:
-#        return render_template('deleteBook.html',book = bookToDelete)
-
-
-# <div class="flex-container">
-#     <div>1</div>
-#     <div>2</div>
-#     <div>3</div>
-# </div>
 
 if __name__ == '__main__':
    app.debug = True

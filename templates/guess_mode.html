@@ -47,8 +47,7 @@
                 </div>
     </div>
 
-    <div
-     class="flex-container" style="flex-direction: column;">
+    <div class="flex-container" style="flex-direction: column;">
         {% for i, word in board %}
         {% if i in solved %}
             <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word}} </div>        
@@ -91,7 +90,33 @@
         {% endif %}
         <br> <br>
         {% endfor %}
-    </divclass="flex-container" style="flex-direction: column;">
-<div>
-
+    </div>
+    <div style="padding: 20px; width: 250px;"> 
+        <h4> Scores</h4>
+        <h5>Coming Soon</h5>
+        <br>
+        <div class="formwrapper">
+            <form method="POST" action="">
+                {{ concede.csrf_token }}
+                {{ concede.concede }}   
+            </form>
+        </div>
+        <br>
+        <div class="formwrapper">
+            <form method="POST" action="">
+                {{ restart.csrf_token }}
+                {{ restart.restart }}   
+            </form>
+        </div>
+        <br>
+        <p>Warning: Beware Weird Phrases. I used NLP tools to extract two-word 
+            phrases from 150,000 news articles. I took the most common 100,000 word 
+            pairings and removed words with fewer than three 'connecting' words to avoid 
+            potential dead ends. The resulting collection includes many phrases that 
+            do not qualify as common idioms, and a handful that may be offensive.
+            An improved collection is in the works! </p>
+        <br>
+        <li> Data source: https://www.kaggle.com/snapcrack/all-the-news </li>
+        
+    </div>
 </div>
