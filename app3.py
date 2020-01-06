@@ -76,7 +76,7 @@ def choose_mode(a, b):
     if params['form1'].validate_on_submit():
         session = DBSession()
         try:
-            params = Enact_Choice().go(session, params, a, b)
+            params = Enact_Choice().go(session, params, a, 0)
             session.commit()
         except:
             session.rollback()

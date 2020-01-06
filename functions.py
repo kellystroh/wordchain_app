@@ -121,7 +121,7 @@ class Concede(object):
 
 class Display_Guess_Mode(object):
     def go(self, session, a, b):
-        form = AnswerForm(prefix=form)
+        form = AnswerForm(prefix='form')
         game = session.query(Game).filter(Game.id == a).all()
         restart = RestartForm(prefix="restart")
         concede = ConcedeForm(prefix="concede")
@@ -144,7 +144,7 @@ class Display_Guess_Mode(object):
 
 class Enact_Guess(object):
     def go(self, session, params, a, b):
-        ans = request.form['answer']
+        ans = request.form.get('answer')
         if ans == params['board_list'][params['choice']]:
             '''
             What happens when answer is right 
