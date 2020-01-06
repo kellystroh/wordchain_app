@@ -113,20 +113,20 @@ def guess_mode(a, b):
     finally:
         session.close()
     
-    if params['restart'].validate_on_submit():
-        return redirect(url_for('index'))   
+    # if params['restart'].validate_on_submit():
+    #     return redirect(url_for('index'))   
 
-    if params['concede'].validate_on_submit():
-        session = DBSession()
-        try:
-            params = Concede().go(session, params, a, b)
-            session.commit()
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-        return redirect(url_for('choose_mode', **params)) 
+    # if params['concede'].validate_on_submit():
+    #     session = DBSession()
+    #     try:
+    #         params = Concede().go(session, params, a, b)
+    #         session.commit()
+    #     except:
+    #         session.rollback()
+    #         raise
+    #     finally:
+    #         session.close()
+    #     return redirect(url_for('choose_mode', **params)) 
 
     if params['form'].validate_on_submit():
         session = DBSession()
@@ -145,7 +145,7 @@ def guess_mode(a, b):
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(host='0.0.0.0', port=80)
+   app.run(host='0.0.0.0', port=8080)
 
 
 '''
