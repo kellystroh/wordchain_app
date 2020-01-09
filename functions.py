@@ -65,16 +65,18 @@ class Display_Choose_Mode(object):
         board = enumerate(board_list)
         solved = literal_eval(game[0].solved)
         active = literal_eval(game[0].active)
+        score1, score2 = game[0].score1, game[0].score2
         turn = game[0].turn
-        letters_active = game[0].letters_active
-        letters_other = game[0].letters_other
+        preview_top = game[0].preview_top
+        preview_bottom = game[0].preview_bottom
         choice = game[0].choice
         params = {'form1':form1, 'form2':form2,
                 'concede':concede, 'restart':restart, 
                 'board':board, 'solved':solved, 
                 'active':active, 'turn':turn,
-                'letters_active':letters_active,
-                'letters_other':letters_other,
+                'preview_top':preview_top,
+                'preview_bottom':preview_bottom,
+                'score1':score1, 'score2':score2, 
                 'choice': choice, 'board_list':board_list,
                 'a':a, 'b':b}
         return params
@@ -85,29 +87,29 @@ class Enact_Choice(object):
         choice = params['active'][x]
         ### check whether more preview letters are available
         if x == 0: 
-            letters_other = game[0].letters_other
-            if len(params['board_list'][choice]) > params['letters_active'] + 1:
-                letters_active = game[0].letters_active + 1
+            preview_bottom = game[0].preview_bottom
+            if len(params['board_list'][choice]) > params['preview_top'] + 1:
+                preview_top = game[0].preview_top + 1
             else:
-                letters_active = game[0].letters_active
+                preview_top = game[0].preview_top
             ### update database 
             session.query(Game).filter(Game.id == a).update({"choice": choice, 
-                                                            "letters_active":letters_active, 
-                                                            "letters_other":letters_other})
+                                                            "preview_top":preview_top, 
+                                                            "preview_bottom":preview_bottom})
         else: 
-            letters_active = game[0].letters_active
-            if len(params['board_list'][choice]) > params['letters_other'] + 1:
-                letters_other = game[0].letters_other + 1
+            preview_top = game[0].preview_top
+            if len(params['board_list'][choice]) > params['preview_bottom'] + 1:
+                preview_bottom = game[0].preview_bottom + 1
             else:
-                letters_other = game[0].letters_other
+                preview_bottom = game[0].preview_bottom
             ### update database 
             session.query(Game).filter(Game.id == a).update({"choice": choice, 
-                                                            "letters_active":letters_active, 
-                                                            "letters_other":letters_other})
+                                                            "preview_top":preview_top, 
+                                                            "preview_bottom":preview_bottom})
         ### update params
         params['choice'] = choice
-        params['letters_active'] = letters_active
-        params['letters_other'] = letters_other
+        params['preview_top'] = preview_top
+        params['preview_bottom'] = preview_bottom
         return params
 
 class Concede(object):
@@ -123,22 +125,21 @@ class Display_Guess_Mode(object):
     def go(self, session, a, b):
         form = AnswerForm()
         game = session.query(Game).filter(Game.id == a).all()
-        # restart = RestartForm(prefix="restart")
-        # concede = ConcedeForm(prefix="concede")
         board_list = literal_eval(game[0].board)
         board = enumerate(board_list)
         solved = literal_eval(game[0].solved)
         turn = game[0].turn
+        score1, score2 = game[0].score1, game[0].score2
         choice = game[0].choice
         active = literal_eval(game[0].active)
-        letters_active = game[0].letters_active
-        letters_other = game[0].letters_other
+        preview_top = game[0].preview_top
+        preview_bottom = game[0].preview_bottom
         params = {'form':form, 'choice':choice,
               'board':board, 'solved':solved, 
               'turn':turn, 'active':active,
-              'letters_active':letters_active,
-            #   'concede':concede, 'restart':restart, 
-              'letters_other':letters_other, 
+              'preview_top':preview_top,
+              'score1':score1, 'score2':score2,
+              'preview_bottom':preview_bottom, 
               'a':a, 'b':b, 'board_list':board_list}
         return params
 
@@ -156,15 +157,24 @@ class Enact_Guess(object):
             params['solved'].append(params['choice'])
             params['solved'] = sorted(params['solved'])
             if params['choice'] == params['active'][0]:
-                params['letters_active'] = 0
+                pro_rate = params['preview_top'] / (len(params['board_list'][params['choice']]))
+                params['preview_top'] = 0
             else: 
-                params['letters_other'] = 0
+                pro_rate = params['preview_bottom'] / (len(params['board_list'][params['choice']]))
+                params['preview_bottom'] = 0
+            score = (int(np.floor(10*(1-pro_rate))))
+            if params['turn'] % 2 != 0:
+                params['score1'] += score
+            else:
+                params['score2'] += score
             params['active'] = find_active(params['solved'])
             session.query(Game).filter(Game.id == a).update({'turn': params['turn'],
                                                             'active': str(params['active']),
                                                             'solved': str(params['solved']),
-                                                            'letters_active': params['letters_active'],
-                                                            'letters_other': params['letters_other']})
+                                                            'preview_top': params['preview_top'],
+                                                            'preview_bottom': params['preview_bottom'],
+                                                            'score1': params['score1'],
+                                                            'score2': params['score2']})
         else:
             '''
             What happens when answer is wrong 

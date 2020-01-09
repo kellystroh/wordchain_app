@@ -43,7 +43,7 @@
             {% if i in active %}
                 {% if i == choice %}
                     {% if i == active[0] %}
-                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_active]}}
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:preview_top]}}
                             <div class="formwrapper">
                                 <form method="POST" action="" >
                                     {{ form.csrf_token }}
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     {% elif i == active[1] %}
-                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_other]}}
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:preview_bottom]}}
                             <div class="formwrapper">
                                 <form method="POST" action="" >
                                     {{ form.csrf_token }}
@@ -67,9 +67,9 @@
                     {% endif %}
                 {% elif i != choice %}
                     {% if i == active[1] %}
-                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_other]}} </div>
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:preview_bottom]}} </div>
                     {% elif i == active[0] %}
-                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:letters_active]}} </div>
+                        <div style="flex-basis: 20px; width:130px; background-color: #64dfce;"> {{word[:preview_top]}} </div>
                     {% endif %}
                     {% endif %}
             {% elif i not in active %}
@@ -81,10 +81,15 @@
     </div>
     <div style="padding: 20px; width: 250px;"> 
         <h4> Scores</h4>
-        <h5>Coming Soon</h5>
-
+        <h5> Player 1 : {{ score1 }} 
+             <br>
+             Player 2 : {{ score2 }} </h5>
         <br>
-        <p> Beware Weird Phrases. I used NLP tools to extract two-word 
+        <p> Scoring is based on the proportion of letters revealed when 
+            the correct answer is guessed. Points are calculated by rounding down the 
+            product of 10 times the percentage of letters that remain hidden.
+            <br>
+            Beware Weird Phrases. I used NLP tools to extract two-word 
             phrases from 150,000 news articles. I took the most common 100,000 word 
             pairings and removed words with fewer than three 'connecting' words to avoid 
             potential dead ends. The resulting collection includes many phrases that 
