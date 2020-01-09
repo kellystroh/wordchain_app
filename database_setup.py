@@ -52,6 +52,7 @@ class Turn(Base):
    clue_above = Column(String(30), default=" ")
    clue_below = Column(String(30), default=" ")
    turn_count = Column(Integer(), default=1)
+   answer = Column(String(50), default=" ")
    correct = Column(Integer(), default=0)
    points = Column(Integer(), default=0)
 

@@ -41,6 +41,7 @@ c = conn.cursor()
 #           clue_above VARCHAR(30) DEFAULT " ",
 #           clue_below VARCHAR(30) DEFAULT " ",
 #           turn_count INTEGER DEFAULT 1,
+#           answer VARCHAR(30), DEFAULT " ",
 #           correct INTEGER DEFAULT 0,
 #           points INTEGER DEFAULT 0,
 #           FOREIGN KEY(game_id) REFERENCES game(id));
@@ -48,7 +49,7 @@ c = conn.cursor()
 
 #executes the query which inserts values in the table
 c.execute("INSERT INTO game VALUES( 1, '[dinner, time, machine, learning, experience, required, reading, material, world, peace]', '', '[0, 9]', '[1, 8]', 0, 0, 0, 1, 0, 0, 0)")
-c.execute("INSERT INTO turn VALUES( 1, 1, 1, 1, '[0,0]', 0, '', 1, 0, '', '', 1, 0, 0 )")
+c.execute("INSERT INTO turn VALUES( 1, 1, 1, 1, '[0,0]', 0, '', 1, 0, '', '', 1, '', 0, 0 )")
 #commits the executions
 conn.commit()
 
