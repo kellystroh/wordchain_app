@@ -145,6 +145,7 @@ class Display_Guess_Mode(object):
 class Enact_Guess(object):
     def go(self, session, params, a, b):
         ans = request.form['answer']
+        ans = ans.lower()
         if ans == params['board_list'][params['choice']]:
             '''
             What happens when answer is right 

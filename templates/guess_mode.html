@@ -16,7 +16,7 @@
 </head>
 <div class="flex-container">
     <div>
-        <div style="padding: 10px; width: 250px;"> <h3>Word Chain Puzzle</h3> </div>
+        <div style="padding: 10px; width: 250px;"> <h3>Word Ladder Puzzle</h3> </div>
             {% if turn % 2 != 0 %}
                 <div style="width: 250px; padding: 20px; background-color: #fdff89;"> {{"Player 1's turn. Submit your guess!"}} </div>
                 {% else %}
@@ -28,22 +28,10 @@
                     <li>Each word forms a phrase with the word below it. </li>
                     <br>
                     <li>After a word is chosen, one letter is revealed. Reveal one letter
-                        per guess until only one letter remains. Then you have to guess. 
-                    </li>
+                        per guess until only one letter remains. The last letter remains hidden
+                        until guessed correctly.</li>
                     <br>
-                    <li>CASE SENSITIVE. All answers are lower case.</li>
-                    <br>
-                    <li>No Numbers, No Punctuation!</li>
-                    <br>
-                    <li>Warning: Beware Weird Phrases. I used NLP tools to extract two-word 
-                        phrases from 150,000 news articles. I took the most common 100,000 word 
-                        pairings and removed words with fewer than three 'connecting' words to avoid 
-                        potential dead ends. The resulting collection includes many phrases that 
-                        do not qualify as common idioms, and a handful that may be offensive.
-                        An improved collection is in the works! </li>
-                    <br>
-                    <li> Data source: https://www.kaggle.com/snapcrack/all-the-news </li>
-
+                    <li>If your guess contains numbers or punctuation, your guess is wrong. </li>
                 </div>
     </div>
 
@@ -96,14 +84,15 @@
         <h5>Coming Soon</h5>
 
         <br>
-        <p>Warning: Beware Weird Phrases. I used NLP tools to extract two-word 
+        <p> Beware Weird Phrases. I used NLP tools to extract two-word 
             phrases from 150,000 news articles. I took the most common 100,000 word 
             pairings and removed words with fewer than three 'connecting' words to avoid 
             potential dead ends. The resulting collection includes many phrases that 
             do not qualify as common idioms, and a handful that may be offensive.
-            An improved collection is in the works! </p>
-        <br>
-        <li> Data source: https://www.kaggle.com/snapcrack/all-the-news </li>
+            An improved collection is in the works! 
+            <br>
+            Data source: https://www.kaggle.com/snapcrack/all-the-news 
+        </p>
         
     </div>
 </div>
