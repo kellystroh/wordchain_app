@@ -19,9 +19,8 @@ Base = declarative_base()
 #creates a create_engine instance at the bottom of the file
 engine = create_engine('sqlite:///game-records.db')
 
-Base.metadata.create_all(engine)
-
-#we create the class Book and extend it from the Base Class.
+#we create the table classes and extend them from the 
+#declarative base Class.
 class Game(Base):
    __tablename__ = 'game'
 
@@ -55,3 +54,5 @@ class Turn(Base):
    turn_count = Column(Integer(), default=1)
    correct = Column(Integer(), default=0)
    points = Column(Integer(), default=0)
+
+Base.metadata.create_all(engine)
