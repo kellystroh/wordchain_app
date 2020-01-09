@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker, scoped_session
-from database_setup import Base, Game
+from database_setup import Base, Game, Turn
 import numpy as np
 import random
 import pickle
@@ -31,81 +31,140 @@ def find_active(solved):
     else:
         return []
 
-# def add_boards(word_dict, number):
-#     board_collection = []
-#     for x in range(number):
-#             brd = pick_set(word_dict)
-#             board_collection.append(brd)
-#             session = DBSession()
-#             new = Game(board = str(brd))
-#             session.add(new)
-#             session.commit()
-#             session.close()
-#             print(x)
-    
+def whose_turn(turn):
+    if turn % 2 != 0:
+        player = 1
+    else: 
+        player = 2
+    return player
+def get_score(player, score1, score2):
+    if player == 1:
+        score = score1
+    else: 
+        score = score2
+    return score
+
+def get_clues(choice, solved, board_list):
+    if choice - 1 in solved:
+        clue_above = board_list[choice - 1]
+    else:
+        clue_above = np.nan
+    if choice + 1 in solved:
+        clue_below = board_list[choice + 1]
+    else:
+        clue_below = np.nan
+    return clue_above, clue_below
+
 
 class Generate_Board(object):
     def go(self, session):
         brd = pick_set(word_dict)
-        new = Game(board = str(brd))
-        session.add(new)
+        new_game = Game(board = str(brd))
+        session.add(new_game)
         session.flush()
-        session.refresh(new)
-        self.a = new.id
+        session.refresh(new_game)
+        self.a = new_game.id
         return self.a
 
 class Display_Choose_Mode(object):
     def go(self, session, a, b):
+        # Define forms for word selection & restart/concede
         form1 = SelectForm(prefix="form1")
         form2 = SelectForm(prefix="form2")
         restart = RestartForm(prefix="restart")
         concede = ConcedeForm(prefix="concede")
-        game = session.query(Game).filter(Game.id == a).all()
-        board_list = literal_eval(game[0].board)
+
+        # Query DB to get details on specific game & turn
+        game = session.query(Game).filter(Game.id == a).all()[0]
+        
+        # Define query results as local variables -- game
+        board_list = literal_eval(game.board)
         board = enumerate(board_list)
-        solved = literal_eval(game[0].solved)
-        active = literal_eval(game[0].active)
-        score1, score2 = game[0].score1, game[0].score2
-        turn = game[0].turn
-        preview_top = game[0].preview_top
-        preview_bottom = game[0].preview_bottom
-        choice = game[0].choice
-        params = {'form1':form1, 'form2':form2,
-                'concede':concede, 'restart':restart, 
-                'board':board, 'solved':solved, 
-                'active':active, 'turn':turn,
-                'preview_top':preview_top,
-                'preview_bottom':preview_bottom,
-                'score1':score1, 'score2':score2, 
-                'choice': choice, 'board_list':board_list,
-                'a':a, 'b':b}
+        ### solved: List of board_list indices for words that have been solved already
+        ### active: List of board_list indices for words available to choose/guess (max 2 items)
+        solved, active = literal_eval(game.solved), literal_eval(game.active)
+        score1, score2 = game.score1, game.score2
+        turn, choice = game.turn, game.choice
+        preview_top, preview_bottom = game.preview_top, game.preview_bottom
+
+        #calc turn details we want to track
+        turn_records = session.query(Turn).filter(Turn.game_id == a).all()
+        turn_count = len(turn_records) + 1
+        player = whose_turn(turn)
+        start_score = get_score(player, score1, score2)
+
+        # New turn
+        new_turn = Turn(game_id=a, active=str(active), 
+                        player=player, start_score=start_score,
+                        turn_count=turn_count)
+        session.add(new_turn)
+
+        params = {'form1':form1, 
+                  'form2':form2,
+                  'concede':concede, 
+                  'restart':restart, 
+                  'board':board, 
+                  'solved':solved, 
+                  'active':active, 
+                  'turn':turn,
+                  'preview_top':preview_top,
+                  'preview_bottom':preview_bottom,
+                  'score1':score1, 
+                  'score2':score2, 
+                  'choice': choice, 
+                  'board_list':board_list,
+                  'turn_count':turn_count,
+                  'a':a, 
+                  'b':b}
         return params
 
 class Enact_Choice(object):
     def go(self, session, params, a, x):
-        game = session.query(Game).filter(Game.id == a).all()
+        game = session.query(Game).filter(Game.id == a).all()[0]
+        # turn_record = session.query(Turn).filter(Turn.game_id == a, Turn.turn_count == turn_count).all()
+        
         choice = params['active'][x]
+        word = params['board_list'][choice]
+        clue_above, clue_below = get_clues(choice, params['solved'], params['board_list'])
         ### check whether more preview letters are available
+        num_guess = len(session.query(Turn).filter(Turn.game_id == a, Turn.choice == choice).all())
+
         if x == 0: 
-            preview_bottom = game[0].preview_bottom
+            preview_bottom = game.preview_bottom
             if len(params['board_list'][choice]) > params['preview_top'] + 1:
-                preview_top = game[0].preview_top + 1
+                preview_top = game.preview_top + 1
             else:
-                preview_top = game[0].preview_top
+                preview_top = game.preview_top
+            preview = preview_top
             ### update database 
             session.query(Game).filter(Game.id == a).update({"choice": choice, 
                                                             "preview_top":preview_top, 
                                                             "preview_bottom":preview_bottom})
+            session.query(Turn).filter(Turn.game_id == a, 
+                                       Turn.turn_count == params['turn_count']).update({'choice':choice,
+                                                                              'preview':preview,
+                                                                              'num_guess':num_guess,
+                                                                              'word':word,
+                                                                              'clue_above':clue_above,
+                                                                              'clue_below':clue_below})
         else: 
-            preview_top = game[0].preview_top
+            preview_top = game.preview_top
             if len(params['board_list'][choice]) > params['preview_bottom'] + 1:
-                preview_bottom = game[0].preview_bottom + 1
+                preview_bottom = game.preview_bottom + 1
             else:
-                preview_bottom = game[0].preview_bottom
+                preview_bottom = game.preview_bottom
+            preview = preview_bottom
             ### update database 
             session.query(Game).filter(Game.id == a).update({"choice": choice, 
                                                             "preview_top":preview_top, 
                                                             "preview_bottom":preview_bottom})
+            session.query(Turn).filter(Turn.game_id == a, 
+                                       Turn.turn_count == params['turn_count']).update({'choice':choice,
+                                                                              'preview':preview,
+                                                                              'num_guess':num_guess,
+                                                                              'word':word,
+                                                                              'clue_above':clue_above,
+                                                                              'clue_below':clue_below})
         ### update params
         params['choice'] = choice
         params['preview_top'] = preview_top
@@ -124,22 +183,25 @@ class Concede(object):
 class Display_Guess_Mode(object):
     def go(self, session, a, b):
         form = AnswerForm()
-        game = session.query(Game).filter(Game.id == a).all()
-        board_list = literal_eval(game[0].board)
+        game = session.query(Game).filter(Game.id == a).all()[0]
+        turn_records = session.query(Turn).filter(Turn.game_id == a).all()
+        turn_count = len(turn_records)
+        board_list = literal_eval(game.board)
         board = enumerate(board_list)
-        solved = literal_eval(game[0].solved)
-        turn = game[0].turn
-        score1, score2 = game[0].score1, game[0].score2
-        choice = game[0].choice
-        active = literal_eval(game[0].active)
-        preview_top = game[0].preview_top
-        preview_bottom = game[0].preview_bottom
+        solved = literal_eval(game.solved)
+        turn = game.turn
+        score1, score2 = game.score1, game.score2
+        choice = game.choice
+        active = literal_eval(game.active)
+        preview_top = game.preview_top
+        preview_bottom = game.preview_bottom
         params = {'form':form, 'choice':choice,
               'board':board, 'solved':solved, 
               'turn':turn, 'active':active,
               'preview_top':preview_top,
               'score1':score1, 'score2':score2,
-              'preview_bottom':preview_bottom, 
+              'preview_bottom':preview_bottom,
+              'turn_count':turn_count, 
               'a':a, 'b':b, 'board_list':board_list}
         return params
 
@@ -151,6 +213,7 @@ class Enact_Guess(object):
             '''
             What happens when answer is right 
             '''
+            correct = 1
             params['turn'] += 2
             b = int(b) + 1
             params['b'] = b
@@ -175,14 +238,23 @@ class Enact_Guess(object):
                                                             'preview_bottom': params['preview_bottom'],
                                                             'score1': params['score1'],
                                                             'score2': params['score2']})
+            session.query(Turn).filter(Turn.game_id == a, 
+                                       Turn.turn_count == params['turn_count']).update({'answer':ans,
+                                                                              'points':score,
+                                                                              'correct':correct})
         else:
             '''
             What happens when answer is wrong 
             '''
+            points, correct = 0, 0
             params['turn'] += 1
             b = int(b) + 1
             params['b'] = b
             session.query(Game).filter(Game.id == a).update({'turn': b})
+            session.query(Turn).filter(Turn.game_id == a, 
+                                       Turn.turn_count == params['turn_count']).update({'answer':ans,
+                                                                              'points':points,
+                                                                              'correct':correct})
             session.commit()
         return params
 
