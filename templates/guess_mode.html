@@ -33,6 +33,24 @@
                     <br>
                     <li>If your guess contains numbers or punctuation, your guess is wrong. Just FYI. </li>
                 </div>
+                <h3 style="margin-left: 20px;">Upgrades in Progress</h3>
+                <div style="padding: 20px; width: 250px;"> 
+                    <li>Improved Collection of Phrases (including a fix to faulty lemmatization)</li>
+                    <br>
+                    <li>Better web formatting. I'd like to make a How-To guide, but I'm too embarassed
+                        to share shoddy HTML files.</li>
+                    <br>
+                    <li>GitHub links. I'm working to make it easier to navigate before sharing. </li>
+                    <br>
+                    <li>Enable phrase feedback. Building a tool allowing users to mark phrases 
+                        that should be removed from the collection. I'd like an easy path to remove
+                        phrases that users deem inappropriate or offensive. The pairing process takes
+                        out of their intended context, and news stories can cover sensitive topics.</li>
+                    <br>
+                    <li>Game stats. My latest improvement added a new table to collect data on words used, 
+                        answers given, and number of guesses before answering correctly. I'd like to publish
+                        random facts, like which words appear most often and which words are hardest to guess </li>
+                </div>
     </div>
 
     <div class="flex-container" style="flex-direction: column;">
@@ -80,10 +98,10 @@
         {% endfor %}
     </div>
     <div style="padding: 20px; width: 250px;"> 
-        <h4> Scores</h4>
-        <h5> Player 1 : {{ score1 }} 
+        <h3> Scores</h3>
+        <h4> Player 1 : {{ score1 }} 
              <br>
-             Player 2 : {{ score2 }} </h5>
+             Player 2 : {{ score2 }} </h4>
         <br>
         <p> Scoring is based on the proportion of letters revealed when 
             the correct answer is guessed. Points are calculated by rounding down the 
