@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link href="https://fonts.googleapis.com/css?family=Amaranth:400,400i,700,700i|Maven+Pro:400,500,600,700,800,900&display=swap" rel="stylesheet">
+<style>
+h1,h2,h3,h4,h5{ line-height: 1.5; font-family: 'Amaranth', sans-serif; letter-spacing: .5px; text-align:center;}
+h1{ font-size: 4em; line-height: 1; font-weight: 700; letter-spacing: 1px;}
+h2{ font-size: 2.8em; line-height: 1.1; font-weight: 700; letter-spacing: 1px;}
+h3{ font-size: 1.8em; font-weight: 700;}
+h4{ font-size: 1.5em; font-weight: 700;}
+h5{ font-size: 1.2em; font-weight: 500; color: #555; line-height: 1.0; font-family: 'Maven Pro', sans-serif;}
+h6{ font-size: 1.0em; font-weight: 400; font-family: 'Maven Pro', sans-serif; text-align:center; }
+p, li, a { line-height: 1.4; font-size: .95em; font-family: 'Maven Pro', serif; font-weight: 400; color: #555; }
+li { padding-bottom:3mm;}
+a { line-height: 1.0; }
+</style>
+<body>
+
+<header class="w3-container w3-border w3-round-large" style="margin:5mm; padding:2mm; text-align:center">
+<h2> Word Ladder </h2>
+</header>
+
+<div class="w3-cell-row w3-mobile" style="padding-bottom:5mm">
+
+    <div class="w3-container w3-cell w3-mobile w3-cell-top" style="width:33%; padding-top:7mm;">
+        {% if turn % 2 != 0 %}
+        <div style="padding: 10px; background-color: #FAD7A0;"> <h6>Player 1's turn. Pick a word to guess!</h6> </div>
+        {% else %}
+        <div style="padding: 10px; background-color: #ABEBC6;"> <h6>Player 2's turn. Pick a word to guess!</h6> </div>
+        {% endif %}
+
+        <div>
+            <h4> How to Play </h4>
+            <ul>
+                <li>Solve the puzzle by completing the 10-word chain.</li>
+                <li>Each word forms a phrase with the word below it. </li>
+                <li>After a word is chosen, one letter is revealed. Reveal one letter
+                    per guess until only one letter remains. The last letter remains hidden
+                    until guessed correctly.</li>
+                <li>If your guess contains numbers or punctuation, your guess is wrong. Just FYI. </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="w3-container w3-cell w3-mobile" style="width:34%">
+        {% for i, word in board %}
+            {% if i in solved %}
+            <div class="w3-border" style="margin:2mm; padding:2mm; font-family: 'Maven Pro', sans-serif;"> {{word}} </div>
+            {% elif i not in solved %}
+                    {% if i in active %}
+                        {% if i == choice %}
+                            {% if i == active[0] %}
+                                <div class="w3-border" style="margin:2mm; padding:2mm; font-size: 1.05em; font-family: 'Maven Pro', sans-serif;"> {{word[:preview_top]}}
+                                    <div class="formwrapper">
+                                        <form method="POST" action="" style="font-size: 1.05em; font-family: 'Maven Pro', sans-serif;">
+                                            {{ form.csrf_token }}
+                                            {{ form.answer }}
+                                            {{ form.submit }}
+                                            
+                                        </form>
+                                    </div>
+                                </div>
+                            {% elif i == active[1] %}
+                                <div class="w3-border" style="margin:2mm; padding:2mm; font-size: 1.05em; font-family: 'Maven Pro', sans-serif;"> {{word[:preview_bottom]}}
+                                    <div class="formwrapper">
+                                        <form method="POST" action="" style="font-size: 1.05em; font-family: 'Maven Pro', sans-serif;">
+                                            {{ form.csrf_token }}
+                                            {{ form.answer }}
+                                            {{ form.submit }}
+                                            
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endif %}        
+                        {% elif i != choice %}
+                            {% if i == active[1] %}
+                                {% if preview_bottom != 0 %}
+                                <div class="w3-border" style="margin:2mm; padding:2mm; font-size: 1.05em; font-family: 'Maven Pro', sans-serif;"> {{word[:preview_bottom]}} </div>
+                                {% else %}
+                                <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+                                {% endif %}
+                            {% elif i == active[0] %}
+                                {% if preview_top != 0 %}
+                                    <div class="w3-border" style="margin:2mm; padding:2mm; font-size: 1.05em; font-family: 'Maven Pro', sans-serif;"> {{word[:preview_top]}} </div>
+                                {% else %}
+                                    <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% elif i not in active%}
+                    <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+    </div>
+
+    <div class="w3-container w3-cell w3-mobile w3-cell-top" style="width:33%; padding-top:7mm;">
+        {% if turn % 2 != 0 %}
+        <div style="padding: 10px; background-color: #FAD7A0;"> <h6>Player 1's turn. Pick a word to guess!</h6> </div>
+        {% else %}
+        <div style="padding: 10px; background-color: #ABEBC6;"> <h6>Player 2's turn. Pick a word to guess!</h6> </div>
+        {% endif %}
+        <div class="w3-border-bottom" style="text-align:center">
+            <h4>Score</h4>
+            <h5>Player 1 : {{ score1 }} </h5>
+            <h5>Player 2 : {{ score2 }} </h5> </div>
+        <div class="w3-border-bottom"><p> Scoring is based on the proportion of letters revealed when 
+                the correct answer is guessed. Points are calculated by rounding down the 
+                product of 10 times the percentage of letters that remain hidden.</p></div>
+        <div style="text-align:center; padding-top:5mm"><a href="#beware"> Beware Weird Phrases... </a></div>
+        <div style="text-align:center"><p> Data Source: All the News <a href="https://www.kaggle.com/snapcrack/all-the-news"> on Kaggle </a></p></div style="text-align:center"></div>
+    </div>
+</div>
+<div class="w3-cell-row w3-mobile w3-border-top" id="beware" style="padding-left:30mm; padding-right:30mm; padding-top:5mm; padding-bottom:5mm;">
+    <p> <b>Beware weird phrases:</b> I used NLP tools to extract two-word 
+        phrases from 150,000 news articles. I took the most common 100,000 word 
+        pairings and removed words with fewer than three 'connecting' words to avoid 
+        potential dead ends. The resulting collection includes many phrases that 
+        do not qualify as common idioms, and a handful that may be offensive.
+        An improved collection is in the works!</p>
+</div>
+<div class="w3-cell-row w3-mobile w3-border-top w3-border-bottom" id="beware" style="padding-left:30mm; padding-right:30mm; padding-top:5mm; padding-bottom:5mm;">
+    <h4>About This Game</h4>
+    <p> The core idea of this game was inspired by the game show Chain Reaction. On the show, the phrases are always
+        "common", two-word idioms in American English. Only rarely have I seen an unfamiliar turn of phrase pop up, so they
+        set the bar high. Alas, I have yet to find an extensive database of idioms, let alone two-word idioms. The good news 
+        is that this gave me a way to make the project more data-sciencey (in technical terms). The bad news is that my 
+        current collection of phrases is bound to disappoint game show connoisseurs, including <b>my mother</b>, who <b>has 
+        proclaimed that my "phrases are terrible"</b>. 
+        <br><br>
+        As for the data science, I built this because I love word games & I enjoy any excuse to do NLP. I have considered 
+        scraping online resources, but I wanted to start with the challenge of generating a collection of phrases using 
+        NLP tools. When I have finished annotating my work, I will post the GitHub links, where you can find the details of 
+        the process. For now, I will just say that it is ongoing. The current batch of phrases is a mix of idioms and pairs of
+        words that happen to occur frequently in news stories. 
+        <br><br>
+        I also wanted to practice deploying a flask app that has more interactive functionality than my website. 
+        I am not a web developer, so this will not be the ideal example of best practices in web apps. That said, it has 
+        led me to explore lots of free resources, so I will eventually write out some tips for fellow beginners. </p>
+</div>
+<div class="w3-cell-row w3-mobile" style="padding-left:30mm; padding-right:30mm; padding-top:5mm; ">
+<h4>Upgrades in Progress</h4>
+<ul>
+    <li>Improved Collection of Phrases (including a fix to faulty lemmatization)</li>
+    <li><strike>Better web formatting.</strike> I'd like to make a How-To guide<strike>, but I'm too embarassed
+        to share shoddy HTML files.</strike> I am no longer embarassed of my HTML files, though they'll only feature
+        in the How-To guide to demonstrate the Flask components </li>
+    <li>GitHub links. I'm working to make it easier to navigate before sharing. </li>
+    <li>Change Scoring method. It seemed fair to award fewer points for guessing the word "book" 
+        if the preview is "boo" than if the preview is "b". However, the current formula could
+        unfairly disadvantage a player for getting shorter words. 
+    </li>
+    <li>Enable phrase feedback. Building a tool allowing users to mark phrases 
+        that should be removed from the collection. I'd like an easy path to remove
+        phrases that users deem inappropriate or offensive. The pairing process takes
+        out of their intended context, and news stories can cover sensitive topics.</li>
+    <li>Game stats. My latest improvement added a new table to collect data on words used, 
+        answers given, and number of guesses before answering correctly. I'd like to publish
+        random facts, like which words appear most often and which words are hardest to guess </li>
+</ul>
+</div>
+
+<footer class="w3-container w3-border w3-round-large" 
+        style="margin:5mm; padding:2mm; text-align:center">
+    <a href="strohberryfields.com"><b>Back to StrohberryFields.com</b></a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ibarra+Real+Nova:400,400i|Ultra&display=swap">
+<style>
+h1,h2,h3,h4,h5,h6{ line-height: 1.5; font-weight: inherit; font-family: 'Ultra', serif;}
+h1{ font-size: 4em; line-height: 1; }
+h2{ font-size: 2.8em; line-height: 1.1; }
+h3{ font-size: 1.8em; }
+h4{ font-size: 1.5em; }
+h5{ font-size: 1.2em; }
+h6{ font-size: .9em; letter-spacing: 1px; }
+p, li, a { line-height: 1.4; font-size: .95em; font-family: 'Ibarra Real Nova', serif; font-weight: 400; color: #555; }
+li { line-height: 1.4; padding-bottom:3mm;}
+</style>
+<body>
+
+<header class="w3-container w3-border w3-round-large" style="margin:5mm; padding:2mm; text-align:center">
+<h2> Word Ladder </h2>
+</header>
+
+<div class="w3-cell-row w3-mobile" style="padding-bottom:5mm">
+
+    <div class="w3-container w3-cell w3-mobile w3-cell-middle" style="width:33%">
+        <div style="padding: 20px; background-color: #fdff89; text-align:center;"> {{"Player 1's turn. Pick a word to guess!"}} </div>
+        <div style="padding:5mm;">
+            <h4 style="text-align:center"> How to Play </h4>
+            <ul>
+                <li>Solve the puzzle by completing the 10-word chain.</li>
+                <li>Each word forms a phrase with the word below it. </li>
+                <li>After a word is chosen, one letter is revealed. Reveal one letter
+                    per guess until only one letter remains. The last letter remains hidden
+                    until guessed correctly.</li>
+                <li>If your guess contains numbers or punctuation, your guess is wrong. Just FYI. </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="w3-container w3-cell w3-mobile" style="width:34%">
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+        <div class="w3-border" style="margin:2mm; padding:2mm; color:white;"> aaaaaaaaaaaaaaaaa </div>
+    </div>
+
+    <div class="w3-container w3-cell w3-mobile w3-cell-middle" style="width:33%">
+        <div style="padding: 20px; background-color: #fdff89; text-align:center;"> {{"Player 1's turn. Pick a word to guess!"}} </div>
+        <div class="w3-border-bottom" style="text-align:center">
+            <h4>Score</h4>
+            <h6>Player 1 : 0 </h6>
+            <h6>Player 2 : 0 </h6> </div>
+        <div class="w3-border-bottom"><p> Scoring is based on the proportion of letters revealed when 
+                the correct answer is guessed. Points are calculated by rounding down the 
+                product of 10 times the percentage of letters that remain hidden.</p></div>
+        <div style="text-align:center; padding-top:5mm"><a href="#beware"> Beware Weird Phrases... </a></div>
+        <div style="text-align:center"><p> Data Source: All the News <a href="https://www.kaggle.com/snapcrack/all-the-news"> on Kaggle </a></p></div style="text-align:center"></div>
+    </div>
+</div>
+    <div class="w3-cell-row w3-mobile w3-border w3-round-large" id="beware" style="padding-left:30mm; padding-right:30mm; padding-top:5mm;">
+        <p> Beware weird phrases: I used NLP tools to extract two-word 
+            phrases from 150,000 news articles. I took the most common 100,000 word 
+            pairings and removed words with fewer than three 'connecting' words to avoid 
+            potential dead ends. The resulting collection includes many phrases that 
+            do not qualify as common idioms, and a handful that may be offensive.
+            An improved collection is in the works!</p>
+    </div>
+<div class="w3-cell-row w3-mobile" style="padding-left:20mm; padding-right:30mm; padding-top:5mm; padding-bottom:5mm">
+    <h4 style="text-align: center;">Upgrades in Progress</h4>
+    <ul>
+        <li>Improved Collection of Phrases (including a fix to faulty lemmatization)</li>
+        <li>Better web formatting. I'd like to make a How-To guide, but I'm too embarassed
+            to share shoddy HTML files.</li>
+        <li>GitHub links. I'm working to make it easier to navigate before sharing. </li>
+        <li>Enable phrase feedback. Building a tool allowing users to mark phrases 
+            that should be removed from the collection. I'd like an easy path to remove
+            phrases that users deem inappropriate or offensive. The pairing process takes
+            out of their intended context, and news stories can cover sensitive topics.</li>
+        <li>Game stats. My latest improvement added a new table to collect data on words used, 
+            answers given, and number of guesses before answering correctly. I'd like to publish
+            random facts, like which words appear most often and which words are hardest to guess </li>
+    </ul>
+</div>
+
+<footer class="w3-container w3-border w3-round-large" 
+        style="margin:5mm; padding:2mm; text-align:center">
+    <a href="strohberryfields.com">Back to StrohberryFields.com</a>
+</footer>
+
+</body>
+</html>
