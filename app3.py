@@ -43,7 +43,11 @@ def index():
             session.close()
 
         return redirect(url_for('choose_mode', a=a, b=b))
-    return render_template("books.html", form=form)
+    return render_template("start.html", form=form)
+
+@app.route('/font', methods=['GET'])
+def fonts():
+    return render_template("fonts.html")
 
 #This will let us Create a new book and save it in our database
 @app.route('/game/<a>/<b>/choose',methods=['GET','POST'])
@@ -99,7 +103,7 @@ def choose_mode(a, b):
 
         return redirect(url_for('guess_mode', **params))
     else:
-        return render_template('pick_mode.html', **params)
+        return render_template('choose.html', **params)
 
 @app.route("/game/<a>/<b>/guess",methods=['GET','POST'])
 def guess_mode(a, b):
@@ -112,21 +116,6 @@ def guess_mode(a, b):
         raise
     finally:
         session.close()
-    
-    # if params['restart'].validate_on_submit():
-    #     return redirect(url_for('index'))   
-
-    # if params['concede'].validate_on_submit():
-    #     session = DBSession()
-    #     try:
-    #         params = Concede().go(session, params, a, b)
-    #         session.commit()
-    #     except:
-    #         session.rollback()
-    #         raise
-    #     finally:
-    #         session.close()
-    #     return redirect(url_for('choose_mode', **params)) 
 
     if params['form'].validate_on_submit():
         session = DBSession()
@@ -141,7 +130,7 @@ def guess_mode(a, b):
 
         return redirect(url_for('choose_mode', **params))
     
-    return render_template('guess_mode.html', **params)
+    return render_template('guess.html', **params)
 
 if __name__ == '__main__':
    app.debug = True
