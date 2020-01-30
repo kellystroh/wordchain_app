@@ -220,12 +220,20 @@ class Enact_Guess(object):
             params['solved'].append(params['choice'])
             params['solved'] = sorted(params['solved'])
             if params['choice'] == params['active'][0]:
-                pro_rate = params['preview_top'] / (len(params['board_list'][params['choice']]))
+                if params['preview_top'] < 11:
+                    score = 10 - (params['preview_top'] - 1)
+                else: 
+                    score = 1
+                # pro_rate = params['preview_top'] / (len(params['board_list'][params['choice']]))
                 params['preview_top'] = 0
-            else: 
-                pro_rate = params['preview_bottom'] / (len(params['board_list'][params['choice']]))
+            else:
+                if params['preview_bottom'] < 11:
+                    score = 10 - (params['preview_bottom'] - 1)
+                else: 
+                    score = 1 
+                #pro_rate = params['preview_bottom'] / (len(params['board_list'][params['choice']]))
                 params['preview_bottom'] = 0
-            score = (int(np.floor(10*(1-pro_rate))))
+            #score = (int(np.floor(10*(1-pro_rate))))
             if params['turn'] % 2 != 0:
                 params['score1'] += score
             else:
